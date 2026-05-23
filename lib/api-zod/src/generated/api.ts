@@ -259,6 +259,11 @@ export const ListAdminOrdersResponse = zod.array(ListAdminOrdersResponseItem)
 export const GetSettingsResponse = zod.object({
   "shopName": zod.string(),
   "shopDescription": zod.string(),
+  "heroTitle": zod.string(),
+  "heroSubtitle": zod.string(),
+  "heroBadge": zod.string(),
+  "bgColor": zod.string(),
+  "accentColor": zod.string(),
   "btcAddress": zod.string(),
   "ethAddress": zod.string(),
   "logoUrl": zod.string().nullish()
@@ -271,6 +276,11 @@ export const GetSettingsResponse = zod.object({
 export const UpdateSettingsBody = zod.object({
   "shopName": zod.string().optional(),
   "shopDescription": zod.string().optional(),
+  "heroTitle": zod.string().optional(),
+  "heroSubtitle": zod.string().optional(),
+  "heroBadge": zod.string().optional(),
+  "bgColor": zod.string().optional(),
+  "accentColor": zod.string().optional(),
   "btcAddress": zod.string().optional(),
   "ethAddress": zod.string().optional(),
   "logoUrl": zod.string().nullish()
@@ -279,6 +289,11 @@ export const UpdateSettingsBody = zod.object({
 export const UpdateSettingsResponse = zod.object({
   "shopName": zod.string(),
   "shopDescription": zod.string(),
+  "heroTitle": zod.string(),
+  "heroSubtitle": zod.string(),
+  "heroBadge": zod.string(),
+  "bgColor": zod.string(),
+  "accentColor": zod.string(),
   "btcAddress": zod.string(),
   "ethAddress": zod.string(),
   "logoUrl": zod.string().nullish()

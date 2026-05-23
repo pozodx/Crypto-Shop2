@@ -203,6 +203,11 @@ router.get("/admin/settings", async (req, res) => {
       .values({
         shopName: "My Crypto Shop",
         shopDescription: "Digital goods delivered instantly after crypto payment.",
+        heroTitle: "Premium Quality, Smart Prices",
+        heroSubtitle: "Great products don't have to be expensive. We deliver high quality digital goods at honest prices.",
+        heroBadge: "INSTANT DELIVERY",
+        bgColor: "#0a0a0a",
+        accentColor: "#ffffff",
         btcAddress: "",
         ethAddress: "",
       })
@@ -212,6 +217,11 @@ router.get("/admin/settings", async (req, res) => {
   res.json({
     shopName: settings.shopName,
     shopDescription: settings.shopDescription,
+    heroTitle: settings.heroTitle,
+    heroSubtitle: settings.heroSubtitle,
+    heroBadge: settings.heroBadge,
+    bgColor: settings.bgColor,
+    accentColor: settings.accentColor,
     btcAddress: settings.btcAddress,
     ethAddress: settings.ethAddress,
     logoUrl: settings.logoUrl,
@@ -219,14 +229,21 @@ router.get("/admin/settings", async (req, res) => {
 });
 
 router.put("/admin/settings", async (req, res) => {
-  const { shopName, shopDescription, btcAddress, ethAddress, logoUrl } =
-    req.body as {
-      shopName?: string;
-      shopDescription?: string;
-      btcAddress?: string;
-      ethAddress?: string;
-      logoUrl?: string | null;
-    };
+  const {
+    shopName, shopDescription, heroTitle, heroSubtitle, heroBadge,
+    bgColor, accentColor, btcAddress, ethAddress, logoUrl,
+  } = req.body as {
+    shopName?: string;
+    shopDescription?: string;
+    heroTitle?: string;
+    heroSubtitle?: string;
+    heroBadge?: string;
+    bgColor?: string;
+    accentColor?: string;
+    btcAddress?: string;
+    ethAddress?: string;
+    logoUrl?: string | null;
+  };
 
   let [settings] = await db.select().from(settingsTable).limit(1);
 
@@ -236,6 +253,11 @@ router.put("/admin/settings", async (req, res) => {
       .values({
         shopName: shopName ?? "My Crypto Shop",
         shopDescription: shopDescription ?? "",
+        heroTitle: heroTitle ?? "Premium Quality, Smart Prices",
+        heroSubtitle: heroSubtitle ?? "",
+        heroBadge: heroBadge ?? "INSTANT DELIVERY",
+        bgColor: bgColor ?? "#0a0a0a",
+        accentColor: accentColor ?? "#ffffff",
         btcAddress: btcAddress ?? "",
         ethAddress: ethAddress ?? "",
         logoUrl: logoUrl ?? null,
@@ -245,6 +267,11 @@ router.put("/admin/settings", async (req, res) => {
     const updateData: Partial<typeof settingsTable.$inferInsert> = {};
     if (shopName !== undefined) updateData.shopName = shopName;
     if (shopDescription !== undefined) updateData.shopDescription = shopDescription;
+    if (heroTitle !== undefined) updateData.heroTitle = heroTitle;
+    if (heroSubtitle !== undefined) updateData.heroSubtitle = heroSubtitle;
+    if (heroBadge !== undefined) updateData.heroBadge = heroBadge;
+    if (bgColor !== undefined) updateData.bgColor = bgColor;
+    if (accentColor !== undefined) updateData.accentColor = accentColor;
     if (btcAddress !== undefined) updateData.btcAddress = btcAddress;
     if (ethAddress !== undefined) updateData.ethAddress = ethAddress;
     if (logoUrl !== undefined) updateData.logoUrl = logoUrl;
@@ -259,6 +286,11 @@ router.put("/admin/settings", async (req, res) => {
   res.json({
     shopName: settings.shopName,
     shopDescription: settings.shopDescription,
+    heroTitle: settings.heroTitle,
+    heroSubtitle: settings.heroSubtitle,
+    heroBadge: settings.heroBadge,
+    bgColor: settings.bgColor,
+    accentColor: settings.accentColor,
     btcAddress: settings.btcAddress,
     ethAddress: settings.ethAddress,
     logoUrl: settings.logoUrl,

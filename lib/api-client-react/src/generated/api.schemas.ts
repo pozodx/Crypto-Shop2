@@ -120,6 +120,11 @@ export interface AdminStats {
 export interface ShopSettings {
   shopName: string;
   shopDescription: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  heroBadge: string;
+  bgColor: string;
+  accentColor: string;
   btcAddress: string;
   ethAddress: string;
   /** @nullable */
@@ -129,6 +134,11 @@ export interface ShopSettings {
 export interface ShopSettingsInput {
   shopName?: string;
   shopDescription?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroBadge?: string;
+  bgColor?: string;
+  accentColor?: string;
   btcAddress?: string;
   ethAddress?: string;
   /** @nullable */

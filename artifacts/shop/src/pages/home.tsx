@@ -1,114 +1,238 @@
-import { useGetSettings, useListProducts, useGetCryptoRates } from "@workspace/api-client-react";
+import { useState } from "react";
+import { useGetSettings, useListProducts, useGetCryptoRates, useGetAdminStats } from "@workspace/api-client-react";
 import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/layout/Navbar";
-import { ArrowRight, Package, Star } from "lucide-react";
+import { Search, Zap, Headphones, DollarSign, Shield, Smile, PackageCheck, Star, ShoppingBag, Users } from "lucide-react";
 
-const CATEGORY_COLORS: Record<string, string> = {
-  Software: "text-blue-400 bg-blue-400/10",
-  Accounts: "text-purple-400 bg-purple-400/10",
-  Proxies: "text-amber-400 bg-amber-400/10",
-  Keys: "text-green-400 bg-green-400/10",
-  Games: "text-rose-400 bg-rose-400/10",
-  Digital: "text-primary bg-primary/10",
+const CATEGORY_GRADIENT: Record<string, string> = {
+  Software:  "from-blue-950 to-blue-900",
+  Accounts:  "from-purple-950 to-purple-900",
+  Proxies:   "from-amber-950 to-amber-900",
+  Keys:      "from-green-950 to-green-900",
+  Games:     "from-rose-950 to-rose-900",
+  Digital:   "from-zinc-900 to-zinc-800",
+};
+const CATEGORY_DOT: Record<string, string> = {
+  Software: "bg-blue-500",
+  Accounts: "bg-purple-500",
+  Proxies:  "bg-amber-500",
+  Keys:     "bg-green-500",
+  Games:    "bg-rose-500",
+  Digital:  "bg-zinc-400",
 };
 
-function getCategoryStyle(category: string) {
-  return CATEGORY_COLORS[category] || "text-primary bg-primary/10";
-}
+const FEATURES = [
+  { icon: Zap,         title: "Instant Delivery",       desc: "Get immediate access to your product right after payment, with no waiting or delays." },
+  { icon: Headphones,  title: "24/7 Support",            desc: "Looking for help? Our team is available around the clock, all week, whenever you need." },
+  { icon: DollarSign,  title: "Competitive Pricing",     desc: "The best value in the market while maintaining high quality standards." },
+  { icon: Shield,      title: "Secure Payments",         desc: "Every transaction is protected. Your crypto payment is verified directly on-chain." },
+  { icon: Smile,       title: "Guaranteed Happiness",    desc: "Not satisfied? We'll make it right. Quality and customer happiness come first." },
+  { icon: PackageCheck,title: "0% Hidden Costs",         desc: "Price you see is the price you pay. No fees, no surprises, ever." },
+];
 
 export default function Home() {
   const { data: settings } = useGetSettings();
   const { data: products, isLoading: productsLoading } = useListProducts();
   const { data: rates } = useGetCryptoRates();
+  const { data: stats } = useGetAdminStats();
+  const [search, setSearch] = useState("");
+
+  const filtered = products?.filter((p) =>
+    !search || p.name.toLowerCase().includes(search.toLowerCase()) || p.category.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const bg = settings?.bgColor || "#0a0a0a";
+  const accent = settings?.accentColor || "#ffffff";
 
   return (
-    <div className="min-h-[100dvh] flex flex-col">
-      <Navbar />
+    <div className="min-h-[100dvh] flex flex-col noise-bg relative" style={{ backgroundColor: bg, color: "#fff" }}>
+      <div className="relative z-10 flex flex-col flex-1">
+        <Navbar />
 
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-10">
-        {/* Hero */}
-        <div className="mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block status-pulse"></span>
-            Instant crypto delivery
+        {/* ── HERO ── */}
+        <section className="text-center px-4 pt-20 pb-16 max-w-3xl mx-auto w-full">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs font-semibold tracking-widest uppercase mb-8" style={{ color: accent }}>
+            <Zap className="w-3 h-3" />
+            {settings?.heroBadge || "INSTANT DELIVERY"}
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground mb-3">
-            {settings?.shopName || "Digital Goods"}
-          </h1>
-          <p className="text-muted-foreground max-w-xl text-base">
-            {settings?.shopDescription || "Buy software, keys, and digital assets. Pay with Bitcoin or Ethereum — delivered instantly on-chain."}
-          </p>
-        </div>
 
-        {/* Product grid */}
-        <div className="space-y-2">
+          {/* Heading */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.05] text-white mb-5">
+            {settings?.heroTitle || "Premium Quality, Smart Prices"}
+          </h1>
+          <p className="text-white/50 text-base sm:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
+            {settings?.heroSubtitle || "Great products don't have to be expensive. We deliver high quality digital goods at honest prices."}
+          </p>
+
+          {/* Search */}
+          <div className="relative max-w-md mx-auto mb-8">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+            <input
+              type="text"
+              placeholder="Search for products..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-full pl-11 pr-5 py-3.5 text-sm text-white placeholder:text-white/30 outline-none focus:border-white/25 transition-colors"
+              data-testid="input-search"
+            />
+          </div>
+
+          {/* CTAs */}
+          <div className="flex items-center justify-center gap-3 flex-wrap mb-14">
+            <a
+              href="#products"
+              className="rounded-full px-7 py-3 text-sm font-bold transition-opacity hover:opacity-90"
+              style={{ backgroundColor: accent, color: bg }}
+            >
+              Explore Products
+            </a>
+            <a
+              href="#why"
+              className="rounded-full px-7 py-3 text-sm font-bold border border-white/15 text-white/80 hover:bg-white/5 transition-colors"
+            >
+              Learn More
+            </a>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-3 max-w-lg mx-auto">
+            {[
+              { icon: Star,        value: "5",                          label: "Feedback Rating" },
+              { icon: ShoppingBag, value: String(stats?.completedOrders ?? 0), label: "Products Sold" },
+              { icon: Users,       value: String(stats?.totalOrders ?? 0),     label: "Total Customers" },
+            ].map(({ icon: Icon, value, label }) => (
+              <div key={label} className="flex items-center gap-3 bg-white/5 border border-white/8 rounded-xl px-4 py-3">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                  <Icon className="w-4 h-4 text-white/60" />
+                </div>
+                <div className="text-left min-w-0">
+                  <div className="text-lg font-black text-white leading-none">{value}</div>
+                  <div className="text-[10px] text-white/35 uppercase tracking-wider mt-0.5 truncate">{label}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── PRODUCTS ── */}
+        <section id="products" className="px-4 sm:px-6 pb-20 max-w-6xl mx-auto w-full">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs font-semibold tracking-widest uppercase mb-5" style={{ color: accent }}>
+              <ShoppingBag className="w-3 h-3" />
+              Here's What We've Got
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black text-white mb-2">Here's What We've Got</h2>
+            <p className="text-white/40 text-sm">Price you see is the price you pay. Wild concept, we know</p>
+          </div>
+
           {productsLoading ? (
-            Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="shimmer h-20 rounded-lg" />
-            ))
-          ) : products?.length === 0 ? (
-            <div className="py-24 text-center text-muted-foreground">
-              <Package className="w-10 h-10 mx-auto mb-3 opacity-30" />
-              <p>No products available yet.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="shimmer h-64 rounded-2xl" />
+              ))}
+            </div>
+          ) : filtered?.length === 0 ? (
+            <div className="text-center py-20 text-white/30">
+              <ShoppingBag className="w-10 h-10 mx-auto mb-3 opacity-40" />
+              <p>No products found.</p>
             </div>
           ) : (
-            products?.map((product) => (
-              <Link key={product.id} href={`/product/${product.id}`}>
-                <div
-                  className="product-card group flex items-center gap-4 p-4 sm:p-5 rounded-lg border border-border bg-card hover:bg-card/80 transition-all duration-200 cursor-pointer"
-                  data-testid={`card-product-${product.id}`}
-                >
-                  {/* Category icon */}
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${getCategoryStyle(product.category)}`}>
-                    <Star className="w-4 h-4" />
-                  </div>
-
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-sm text-foreground truncate">{product.name}</span>
-                      <Badge
-                        variant="secondary"
-                        className={`text-[10px] px-1.5 py-0 h-4 shrink-0 border-0 ${getCategoryStyle(product.category)}`}
-                      >
-                        {product.category}
-                      </Badge>
-                      {product.stock !== null && product.stock !== undefined && product.stock <= 5 && (
-                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 shrink-0 border-0 text-amber-400 bg-amber-400/10">
-                          {product.stock} left
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{product.description}</p>
-                  </div>
-
-                  {/* Price */}
-                  <div className="text-right shrink-0">
-                    <div className="text-base font-bold font-mono text-foreground">${product.priceUsd.toFixed(2)}</div>
-                    {rates && (
-                      <div className="text-[10px] text-muted-foreground font-mono">
-                        {(product.priceUsd / rates.btcUsd).toFixed(5)} BTC
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filtered?.map((product) => {
+                const gradient = CATEGORY_GRADIENT[product.category] || "from-zinc-900 to-zinc-800";
+                const dot = CATEGORY_DOT[product.category] || "bg-zinc-400";
+                const inStock = product.stock === null || product.stock > 0;
+                return (
+                  <Link key={product.id} href={`/product/${product.id}`}>
+                    <div
+                      className="group rounded-2xl border border-white/8 overflow-hidden cursor-pointer hover:border-white/20 transition-all duration-200 hover:-translate-y-0.5"
+                      data-testid={`card-product-${product.id}`}
+                    >
+                      {/* Thumbnail */}
+                      <div className={`relative h-44 bg-gradient-to-br ${gradient} flex items-center justify-center overflow-hidden`}>
+                        {product.imageUrl ? (
+                          <img
+                            src={product.imageUrl}
+                            alt={product.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div className="flex flex-col items-center gap-2 opacity-30">
+                            <div className={`w-3 h-3 rounded-full ${dot}`} />
+                            <span className="text-white/40 text-[10px] uppercase tracking-widest font-bold">{product.category}</span>
+                          </div>
+                        )}
+                        {/* Stock badge */}
+                        <div className="absolute bottom-3 right-3">
+                          {inStock ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/60 border border-white/10 text-[10px] font-bold text-emerald-400 backdrop-blur-sm">
+                              {product.stock === null ? "IN STOCK" : `${product.stock} IN STOCK`}
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-black/60 border border-white/10 text-[10px] font-bold text-red-400 backdrop-blur-sm">
+                              OUT OF STOCK
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    )}
-                  </div>
 
-                  {/* Arrow */}
-                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
-                </div>
-              </Link>
-            ))
+                      {/* Info */}
+                      <div className="p-4" style={{ backgroundColor: `${bg}e6` }}>
+                        <div className="font-bold text-white text-sm mb-2 truncate">{product.name}</div>
+                        <div className="text-[10px] text-white/35 uppercase tracking-widest mb-1">Starting from</div>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-xl font-black text-white">${product.priceUsd.toFixed(2)}</span>
+                          {rates && (
+                            <span className="text-[10px] text-white/30 font-mono">
+                              ≈ {(product.priceUsd / rates.btcUsd).toFixed(5)} BTC
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           )}
-        </div>
+        </section>
 
-        {/* Footer note */}
-        {!productsLoading && (products?.length ?? 0) > 0 && (
-          <p className="text-center text-xs text-muted-foreground mt-8">
-            All products delivered automatically after payment confirmation on-chain.
-          </p>
-        )}
-      </main>
+        {/* ── WHY WE'RE DIFFERENT ── */}
+        <section id="why" className="px-4 sm:px-6 pb-24 max-w-6xl mx-auto w-full">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs font-semibold tracking-widest uppercase mb-5" style={{ color: accent }}>
+              <Zap className="w-3 h-3" />
+              INSTANT DELIVERY ADDED!
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black text-white mb-2">Why We're Different</h2>
+            <p className="text-white/40 text-sm">No tricks, no fees, just honest quality</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {FEATURES.map(({ icon: Icon, title, desc }) => (
+              <div
+                key={title}
+                className="p-5 rounded-xl border border-white/8 bg-white/3 hover:bg-white/5 transition-colors"
+              >
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="mt-0.5 shrink-0">
+                    <Icon className="w-5 h-5 text-white/40" />
+                  </div>
+                  <div className="w-px h-5 bg-white/10 shrink-0 mt-0.5" />
+                  <div className="font-bold text-sm text-white">{title}</div>
+                </div>
+                <p className="text-xs text-white/35 leading-relaxed pl-8">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="border-t border-white/5 py-6 text-center">
+          <p className="text-xs text-white/20">{settings?.shopName || "Store"} — All payments verified on-chain. No middlemen.</p>
+        </footer>
+      </div>
     </div>
   );
 }

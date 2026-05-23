@@ -435,11 +435,21 @@ components:
 
     ShopSettings:
       type: object
-      required: [shopName, shopDescription, btcAddress, ethAddress]
+      required: [shopName, shopDescription, heroTitle, heroSubtitle, heroBadge, bgColor, accentColor, btcAddress, ethAddress]
       properties:
         shopName:
           type: string
         shopDescription:
+          type: string
+        heroTitle:
+          type: string
+        heroSubtitle:
+          type: string
+        heroBadge:
+          type: string
+        bgColor:
+          type: string
+        accentColor:
           type: string
         btcAddress:
           type: string
@@ -454,6 +464,16 @@ components:
         shopName:
           type: string
         shopDescription:
+          type: string
+        heroTitle:
+          type: string
+        heroSubtitle:
+          type: string
+        heroBadge:
+          type: string
+        bgColor:
+          type: string
+        accentColor:
           type: string
         btcAddress:
           type: string

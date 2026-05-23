@@ -1,41 +1,28 @@
 import { Link } from "wouter";
-import { useGetSettings, useGetCryptoRates } from "@workspace/api-client-react";
+import { useGetSettings } from "@workspace/api-client-react";
 
 export function Navbar() {
   const { data: settings } = useGetSettings();
-  const { data: rates } = useGetCryptoRates();
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+    <nav
+      className="sticky top-0 z-50 border-b border-white/5 backdrop-blur-xl"
+      style={{ backgroundColor: settings?.bgColor ? `${settings.bgColor}cc` : "rgba(10,10,10,0.8)" }}
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 shrink-0">
-          <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center shrink-0">
-            <span className="text-primary-foreground font-black text-sm leading-none">
-              {settings?.shopName?.charAt(0) || "S"}
+          {settings?.logoUrl ? (
+            <img src={settings.logoUrl} alt={settings.shopName} className="h-7 w-auto object-contain" />
+          ) : (
+            <span className="font-black text-lg tracking-tight text-white">
+              {settings?.shopName || "Store"}
             </span>
-          </div>
-          <span className="font-bold text-sm tracking-tight text-foreground">
-            {settings?.shopName || "CryptoStore"}
-          </span>
-        </Link>
-
-        <div className="flex items-center gap-4">
-          {rates && (
-            <div className="hidden sm:flex items-center gap-3 text-xs font-mono text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block"></span>
-                BTC <span className="text-foreground">${rates.btcUsd.toLocaleString()}</span>
-              </span>
-              <span className="text-border">|</span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-purple-400 inline-block"></span>
-                ETH <span className="text-foreground">${rates.ethUsd.toLocaleString()}</span>
-              </span>
-            </div>
           )}
+        </Link>
+        <div className="flex items-center gap-3">
           <Link
             href="/admin"
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-md hover:bg-secondary"
+            className="text-xs text-white/40 hover:text-white/80 transition-colors px-3 py-1.5 rounded-md hover:bg-white/5"
           >
             Admin
           </Link>
