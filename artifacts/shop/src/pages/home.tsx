@@ -1,116 +1,113 @@
 import { useGetSettings, useListProducts, useGetCryptoRates } from "@workspace/api-client-react";
 import { Link } from "wouter";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/layout/Navbar";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ArrowRight, Package, Star } from "lucide-react";
+
+const CATEGORY_COLORS: Record<string, string> = {
+  Software: "text-blue-400 bg-blue-400/10",
+  Accounts: "text-purple-400 bg-purple-400/10",
+  Proxies: "text-amber-400 bg-amber-400/10",
+  Keys: "text-green-400 bg-green-400/10",
+  Games: "text-rose-400 bg-rose-400/10",
+  Digital: "text-primary bg-primary/10",
+};
+
+function getCategoryStyle(category: string) {
+  return CATEGORY_COLORS[category] || "text-primary bg-primary/10";
+}
 
 export default function Home() {
-  const { data: settings, isLoading: settingsLoading } = useGetSettings();
+  const { data: settings } = useGetSettings();
   const { data: products, isLoading: productsLoading } = useListProducts();
-  const { data: rates, isLoading: ratesLoading } = useGetCryptoRates();
-
-  const isLoading = settingsLoading || productsLoading || ratesLoading;
+  const { data: rates } = useGetCryptoRates();
 
   return (
     <div className="min-h-[100dvh] flex flex-col">
       <Navbar />
-      
-      <main className="flex-1 container mx-auto px-4 py-12">
-        <div className="text-center mb-16 space-y-4">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground">
+
+      <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-10">
+        {/* Hero */}
+        <div className="mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block status-pulse"></span>
+            Instant crypto delivery
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground mb-3">
             {settings?.shopName || "Digital Goods"}
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            {settings?.shopDescription || "Buy software, keys, and digital assets securely with crypto."}
+          <p className="text-muted-foreground max-w-xl text-base">
+            {settings?.shopDescription || "Buy software, keys, and digital assets. Pay with Bitcoin or Ethereum — delivered instantly on-chain."}
           </p>
-          
-          {rates && (
-            <div className="inline-flex gap-4 p-3 mt-4 rounded-full bg-card border border-border shadow-sm items-center">
-              <div className="flex items-center gap-2">
-                <span className="text-primary font-medium text-sm">BTC</span>
-                <span className="text-sm font-mono">${rates.btcUsd.toLocaleString()}</span>
-              </div>
-              <div className="w-px h-4 bg-border"></div>
-              <div className="flex items-center gap-2">
-                <span className="text-primary font-medium text-sm">ETH</span>
-                <span className="text-sm font-mono">${rates.ethUsd.toLocaleString()}</span>
-              </div>
+        </div>
+
+        {/* Product grid */}
+        <div className="space-y-2">
+          {productsLoading ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="shimmer h-20 rounded-lg" />
+            ))
+          ) : products?.length === 0 ? (
+            <div className="py-24 text-center text-muted-foreground">
+              <Package className="w-10 h-10 mx-auto mb-3 opacity-30" />
+              <p>No products available yet.</p>
             </div>
+          ) : (
+            products?.map((product) => (
+              <Link key={product.id} href={`/product/${product.id}`}>
+                <div
+                  className="product-card group flex items-center gap-4 p-4 sm:p-5 rounded-lg border border-border bg-card hover:bg-card/80 transition-all duration-200 cursor-pointer"
+                  data-testid={`card-product-${product.id}`}
+                >
+                  {/* Category icon */}
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${getCategoryStyle(product.category)}`}>
+                    <Star className="w-4 h-4" />
+                  </div>
+
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-semibold text-sm text-foreground truncate">{product.name}</span>
+                      <Badge
+                        variant="secondary"
+                        className={`text-[10px] px-1.5 py-0 h-4 shrink-0 border-0 ${getCategoryStyle(product.category)}`}
+                      >
+                        {product.category}
+                      </Badge>
+                      {product.stock !== null && product.stock !== undefined && product.stock <= 5 && (
+                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 shrink-0 border-0 text-amber-400 bg-amber-400/10">
+                          {product.stock} left
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{product.description}</p>
+                  </div>
+
+                  {/* Price */}
+                  <div className="text-right shrink-0">
+                    <div className="text-base font-bold font-mono text-foreground">${product.priceUsd.toFixed(2)}</div>
+                    {rates && (
+                      <div className="text-[10px] text-muted-foreground font-mono">
+                        {(product.priceUsd / rates.btcUsd).toFixed(5)} BTC
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Arrow */}
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+                </div>
+              </Link>
+            ))
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {isLoading ? (
-            Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i} className="flex flex-col h-full bg-card/50 border-border/50">
-                <Skeleton className="h-48 w-full rounded-t-xl" />
-                <CardContent className="p-6 space-y-4">
-                  <Skeleton className="h-6 w-2/3" />
-                  <Skeleton className="h-4 w-1/3" />
-                  <Skeleton className="h-10 w-full" />
-                </CardContent>
-              </Card>
-            ))
-          ) : (
-            products?.map((product) => (
-              <Card key={product.id} className="flex flex-col h-full bg-card border-border hover:border-primary/50 transition-colors group overflow-hidden">
-                {product.imageUrl ? (
-                  <div className="aspect-video w-full overflow-hidden bg-muted">
-                    <img 
-                      src={product.imageUrl} 
-                      alt={product.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                ) : (
-                  <div className="aspect-video w-full bg-muted flex items-center justify-center border-b border-border">
-                    <span className="text-muted-foreground text-4xl font-bold opacity-20">{product.name.charAt(0)}</span>
-                  </div>
-                )}
-                
-                <CardHeader className="p-6 pb-2">
-                  <div className="flex justify-between items-start gap-4">
-                    <div>
-                      <h3 className="font-semibold text-xl leading-tight line-clamp-1">{product.name}</h3>
-                      <Badge variant="secondary" className="mt-2">{product.category}</Badge>
-                    </div>
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="p-6 pt-2 flex-1">
-                  <p className="text-muted-foreground text-sm line-clamp-2 mt-2">{product.description}</p>
-                  
-                  <div className="mt-4 pt-4 border-t border-border flex items-baseline justify-between">
-                    <div>
-                      <div className="text-2xl font-bold font-mono text-primary">${product.priceUsd.toFixed(2)}</div>
-                      {rates && (
-                        <div className="text-xs text-muted-foreground font-mono mt-1">
-                          ≈ {(product.priceUsd / rates.btcUsd).toFixed(6)} BTC
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-                
-                <CardFooter className="p-6 pt-0">
-                  <Link href={`/product/${product.id}`} className="w-full block">
-                    <Button className="w-full font-semibold" data-testid={`button-buy-${product.id}`}>
-                      Purchase Now
-                    </Button>
-                  </Link>
-                </CardFooter>
-              </Card>
-            ))
-          )}
-          
-          {!isLoading && products?.length === 0 && (
-            <div className="col-span-full py-24 text-center text-muted-foreground">
-              No products available at the moment.
-            </div>
-          )}
-        </div>
+        {/* Footer note */}
+        {!productsLoading && (products?.length ?? 0) > 0 && (
+          <p className="text-center text-xs text-muted-foreground mt-8">
+            All products delivered automatically after payment confirmation on-chain.
+          </p>
+        )}
       </main>
     </div>
   );
