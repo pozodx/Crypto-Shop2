@@ -3,20 +3,28 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Crypto Shop API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: products
+    description: Product operations
+  - name: orders
+    description: Order operations
+  - name: crypto
+    description: Crypto rate operations
+  - name: admin
+    description: Admin operations
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +32,253 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /products:
+    get:
+      operationId: listProducts
+      tags: [products]
+      summary: List active products
+      responses:
+        "200":
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+
+  /products/{id}:
+    get:
+      operationId: getProduct
+      tags: [products]
+      summary: Get a single product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Not found
+
+  /crypto/rates:
+    get:
+      operationId: getCryptoRates
+      tags: [crypto]
+      summary: Get current BTC and ETH rates in USD
+      responses:
+        "200":
+          description: Crypto rates
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CryptoRates"
+
+  /orders:
+    post:
+      operationId: createOrder
+      tags: [orders]
+      summary: Create a new order and initiate crypto payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderInput"
+      responses:
+        "201":
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad request
+
+  /orders/{id}:
+    get:
+      operationId: getOrder
+      tags: [orders]
+      summary: Get order status and delivery details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Not found
+
+  /orders/{id}/verify:
+    post:
+      operationId: verifyOrderPayment
+      tags: [orders]
+      summary: Trigger blockchain payment verification for an order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Not found
+
+  /admin/stats:
+    get:
+      operationId: getAdminStats
+      tags: [admin]
+      summary: Get admin dashboard stats
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
+  /admin/products:
+    get:
+      operationId: listAdminProducts
+      tags: [admin]
+      summary: List all products (including inactive)
+      responses:
+        "200":
+          description: List of all products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+    post:
+      operationId: createProduct
+      tags: [admin]
+      summary: Create a new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "201":
+          description: Product created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+
+  /admin/products/{id}:
+    put:
+      operationId: updateProduct
+      tags: [admin]
+      summary: Update a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductUpdate"
+      responses:
+        "200":
+          description: Updated product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteProduct
+      tags: [admin]
+      summary: Delete a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResult"
+
+  /admin/orders:
+    get:
+      operationId: listAdminOrders
+      tags: [admin]
+      summary: List all orders
+      responses:
+        "200":
+          description: All orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+
+  /admin/settings:
+    get:
+      operationId: getSettings
+      tags: [admin]
+      summary: Get shop settings
+      responses:
+        "200":
+          description: Settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShopSettings"
+    put:
+      operationId: updateSettings
+      tags: [admin]
+      summary: Update shop settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShopSettingsInput"
+      responses:
+        "200":
+          description: Updated settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShopSettings"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +289,182 @@ components:
       required:
         - status
 
+    Product:
+      type: object
+      required: [id, name, description, priceUsd, imageUrl, category, isActive, stock, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        priceUsd:
+          type: number
+        imageUrl:
+          type: ["string", "null"]
+        category:
+          type: string
+        isActive:
+          type: boolean
+        stock:
+          type: ["integer", "null"]
+        deliveryNote:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    ProductInput:
+      type: object
+      required: [name, description, priceUsd, category]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        priceUsd:
+          type: number
+        imageUrl:
+          type: ["string", "null"]
+        category:
+          type: string
+        isActive:
+          type: boolean
+        stock:
+          type: ["integer", "null"]
+        digitalContent:
+          type: ["string", "null"]
+        deliveryNote:
+          type: ["string", "null"]
+
+    ProductUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        priceUsd:
+          type: number
+        imageUrl:
+          type: ["string", "null"]
+        category:
+          type: string
+        isActive:
+          type: boolean
+        stock:
+          type: ["integer", "null"]
+        digitalContent:
+          type: ["string", "null"]
+        deliveryNote:
+          type: ["string", "null"]
+
+    OrderInput:
+      type: object
+      required: [productId, buyerEmail, cryptoCurrency]
+      properties:
+        productId:
+          type: integer
+        buyerEmail:
+          type: string
+        cryptoCurrency:
+          type: string
+          enum: [BTC, ETH]
+
+    Order:
+      type: object
+      required: [id, productId, productName, buyerEmail, cryptoCurrency, cryptoAmount, walletAddress, status, createdAt]
+      properties:
+        id:
+          type: string
+        productId:
+          type: integer
+        productName:
+          type: string
+        buyerEmail:
+          type: string
+        cryptoCurrency:
+          type: string
+        cryptoAmount:
+          type: string
+        walletAddress:
+          type: string
+        txHash:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, confirming, completed, expired, failed]
+        digitalContent:
+          type: ["string", "null"]
+        deliveryNote:
+          type: ["string", "null"]
+        expiresAt:
+          type: string
+        createdAt:
+          type: string
+        completedAt:
+          type: ["string", "null"]
+
+    CryptoRates:
+      type: object
+      required: [btcUsd, ethUsd, updatedAt]
+      properties:
+        btcUsd:
+          type: number
+        ethUsd:
+          type: number
+        updatedAt:
+          type: string
+
+    AdminStats:
+      type: object
+      required: [totalRevenue, totalOrders, pendingOrders, completedOrders, recentOrders]
+      properties:
+        totalRevenue:
+          type: number
+        totalOrders:
+          type: integer
+        pendingOrders:
+          type: integer
+        completedOrders:
+          type: integer
+        recentOrders:
+          type: array
+          items:
+            $ref: "#/components/schemas/Order"
+
+    ShopSettings:
+      type: object
+      required: [shopName, shopDescription, btcAddress, ethAddress]
+      properties:
+        shopName:
+          type: string
+        shopDescription:
+          type: string
+        btcAddress:
+          type: string
+        ethAddress:
+          type: string
+        logoUrl:
+          type: ["string", "null"]
+
+    ShopSettingsInput:
+      type: object
+      properties:
+        shopName:
+          type: string
+        shopDescription:
+          type: string
+        btcAddress:
+          type: string
+        ethAddress:
+          type: string
+        logoUrl:
+          type: ["string", "null"]
+
+    DeleteResult:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
