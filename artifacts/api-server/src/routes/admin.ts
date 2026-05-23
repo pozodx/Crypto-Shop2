@@ -1,9 +1,45 @@
-import { Router } from "express";
+import { Router, type Request, type Response, type NextFunction } from "express";
+import { createHmac } from "crypto";
 import { db } from "@workspace/db";
 import { productsTable, ordersTable, settingsTable } from "@workspace/db";
 import { eq, desc, count, sql } from "drizzle-orm";
 
 const router = Router();
+
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin";
+const TOKEN_SECRET = process.env.SESSION_SECRET || "fallback-secret";
+
+function computeToken(pw: string): string {
+  return createHmac("sha256", TOKEN_SECRET).update(pw).digest("hex");
+}
+
+const VALID_TOKEN = computeToken(ADMIN_PASSWORD);
+
+function requireAuth(req: Request, res: Response, next: NextFunction) {
+  const auth = req.headers.authorization;
+  if (!auth?.startsWith("Bearer ")) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  if (auth.slice(7) !== VALID_TOKEN) {
+    res.status(401).json({ error: "Invalid token" });
+    return;
+  }
+  next();
+}
+
+// Public: admin login
+router.post("/admin/login", (req, res) => {
+  const { password } = req.body as { password?: string };
+  if (!password || computeToken(password) !== VALID_TOKEN) {
+    res.status(401).json({ error: "Incorrect password" });
+    return;
+  }
+  res.json({ token: VALID_TOKEN });
+});
+
+// All routes below this line require auth
+router.use(requireAuth);
 
 function formatOrder(o: typeof ordersTable.$inferSelect) {
   return {

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { productsTable } from "@workspace/db";
-import { eq } from "drizzle-orm";
+import { productsTable, ordersTable, settingsTable } from "@workspace/db";
+import { eq, count } from "drizzle-orm";
 
 const router = Router();
 
@@ -57,6 +57,44 @@ router.get("/products/:id", async (req, res) => {
     stock: product.stock,
     deliveryNote: product.deliveryNote,
     createdAt: product.createdAt.toISOString(),
+  });
+});
+
+router.get("/settings", async (_req, res) => {
+  let [settings] = await db.select().from(settingsTable).limit(1);
+  if (!settings) {
+    [settings] = await db.insert(settingsTable).values({
+      shopName: "My Crypto Shop",
+      shopDescription: "Digital goods delivered instantly after crypto payment.",
+      heroTitle: "Premium Quality, Smart Prices",
+      heroSubtitle: "Great products don't have to be expensive. We deliver high quality digital goods at honest prices.",
+      heroBadge: "INSTANT DELIVERY",
+      bgColor: "#0a0a0a",
+      accentColor: "#ffffff",
+      btcAddress: "",
+      ethAddress: "",
+    }).returning();
+  }
+  res.json({
+    shopName: settings.shopName,
+    shopDescription: settings.shopDescription,
+    heroTitle: settings.heroTitle,
+    heroSubtitle: settings.heroSubtitle,
+    heroBadge: settings.heroBadge,
+    bgColor: settings.bgColor,
+    accentColor: settings.accentColor,
+    btcAddress: settings.btcAddress,
+    ethAddress: settings.ethAddress,
+    logoUrl: settings.logoUrl,
+  });
+});
+
+router.get("/stats", async (_req, res) => {
+  const [total] = await db.select({ value: count() }).from(ordersTable);
+  const [completed] = await db.select({ value: count() }).from(ordersTable).where(eq(ordersTable.status, "completed"));
+  res.json({
+    totalOrders: total?.value ?? 0,
+    completedOrders: completed?.value ?? 0,
   });
 });
 

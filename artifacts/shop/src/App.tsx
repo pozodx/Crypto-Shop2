@@ -2,6 +2,8 @@ import { Switch, Route } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
+import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
 import NotFound from "@/pages/not-found";
 
 import Home from "@/pages/home";
@@ -20,13 +22,12 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/product/:id" component={ProductDetail} />
       <Route path="/order/:id" component={OrderPage} />
-      
-      {/* Admin routes */}
+
       <Route path="/admin" component={Dashboard} />
       <Route path="/admin/products" component={ProductsAdmin} />
       <Route path="/admin/orders" component={OrdersAdmin} />
       <Route path="/admin/settings" component={SettingsAdmin} />
-      
+
       <Route component={NotFound} />
     </Switch>
   );
@@ -35,10 +36,14 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Router />
-        <Toaster />
-      </TooltipProvider>
+      <CurrencyProvider>
+        <AdminAuthProvider>
+          <TooltipProvider>
+            <Router />
+            <Toaster />
+          </TooltipProvider>
+        </AdminAuthProvider>
+      </CurrencyProvider>
     </QueryClientProvider>
   );
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useParams, Link } from "wouter";
 import { useGetProduct, useGetCryptoRates, useCreateOrder } from "@workspace/api-client-react";
 import { Navbar } from "@/components/layout/Navbar";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +21,7 @@ export default function ProductDetail() {
   const { data: product, isLoading: productLoading } = useGetProduct(Number(id));
   const { data: rates } = useGetCryptoRates();
   const createOrder = useCreateOrder();
+  const { formatPrice } = useCurrency();
 
   const handlePurchase = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,7 +86,7 @@ export default function ProductDetail() {
             </div>
 
             <div className="flex items-baseline gap-3 py-4 border-t border-border">
-              <span className="text-3xl font-bold font-mono text-foreground">${product.priceUsd.toFixed(2)}</span>
+              <span className="text-3xl font-bold font-mono text-foreground">{formatPrice(product.priceUsd)}</span>
               <span className="text-sm text-muted-foreground font-mono">
                 ≈ {btcAmount} BTC / {ethAmount} ETH
               </span>
@@ -115,7 +117,7 @@ export default function ProductDetail() {
             <div className="rounded-xl border border-border bg-card p-5 space-y-5 sticky top-20">
               <div>
                 <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Total</p>
-                <p className="text-2xl font-bold font-mono">${product.priceUsd.toFixed(2)}</p>
+                <p className="text-2xl font-bold font-mono">{formatPrice(product.priceUsd)}</p>
                 <p className="text-xs font-mono text-primary mt-0.5">≈ {selectedAmount} {cryptoCurrency}</p>
               </div>
 

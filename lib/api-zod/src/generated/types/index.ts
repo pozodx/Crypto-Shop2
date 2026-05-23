@@ -17,5 +17,6 @@ export * from './orderStatus';
 export * from './product';
 export * from './productInput';
 export * from './productUpdate';
+export * from './publicStats';
 export * from './shopSettings';
 export * from './shopSettingsInput';

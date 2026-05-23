@@ -9,6 +9,32 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Get public shop settings (name, hero text, colors)
+ */
+export const GetPublicSettingsResponse = zod.object({
+  "shopName": zod.string(),
+  "shopDescription": zod.string(),
+  "heroTitle": zod.string(),
+  "heroSubtitle": zod.string(),
+  "heroBadge": zod.string(),
+  "bgColor": zod.string(),
+  "accentColor": zod.string(),
+  "btcAddress": zod.string(),
+  "ethAddress": zod.string(),
+  "logoUrl": zod.string().nullish()
+})
+
+
+/**
+ * @summary Get public shop stats (order counts)
+ */
+export const GetPublicStatsResponse = zod.object({
+  "totalOrders": zod.number(),
+  "completedOrders": zod.number()
+})
+
+
+/**
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({

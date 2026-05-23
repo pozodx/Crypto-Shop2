@@ -145,6 +145,11 @@ export interface ShopSettingsInput {
   logoUrl?: string | null;
 }
 
+export interface PublicStats {
+  totalOrders: number;
+  completedOrders: number;
+}
+
 export interface DeleteResult {
   success: boolean;
 }

@@ -20,6 +20,32 @@ tags:
     description: Admin operations
 
 paths:
+  /settings:
+    get:
+      operationId: getPublicSettings
+      tags: [products]
+      summary: Get public shop settings (name, hero text, colors)
+      responses:
+        "200":
+          description: Public settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShopSettings"
+
+  /stats:
+    get:
+      operationId: getPublicStats
+      tags: [products]
+      summary: Get public shop stats (order counts)
+      responses:
+        "200":
+          description: Public stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicStats"
+
   /healthz:
     get:
       operationId: healthCheck
@@ -481,6 +507,15 @@ components:
           type: string
         logoUrl:
           type: ["string", "null"]
+
+    PublicStats:
+      type: object
+      required: [totalOrders, completedOrders]
+      properties:
+        totalOrders:
+          type: integer
+        completedOrders:
+          type: integer
 
     DeleteResult:
       type: object

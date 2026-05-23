@@ -1,9 +1,10 @@
 import { useState, useMemo } from "react";
-import { useGetSettings, useListProducts, useGetCryptoRates, useGetAdminStats } from "@workspace/api-client-react";
+import { useGetPublicSettings, useListProducts, useGetCryptoRates, useGetPublicStats } from "@workspace/api-client-react";
 import { Link } from "wouter";
 import { Navbar } from "@/components/layout/Navbar";
 import { Search, Zap, Headphones, DollarSign, Shield, Smile, PackageCheck, Star, ShoppingBag, Users } from "lucide-react";
 import starsBg from "@assets/126e7fc4a5bf81259c606d121a00cc0b_1779553459078.jpg";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const CATEGORY_GRADIENT: Record<string, string> = {
   Software: "from-blue-950 to-blue-900",
@@ -32,10 +33,10 @@ const FEATURES = [
 ];
 
 export default function Home() {
-  const { data: settings } = useGetSettings();
+  const { data: settings } = useGetPublicSettings();
   const { data: products, isLoading: productsLoading } = useListProducts();
   const { data: rates } = useGetCryptoRates();
-  const { data: stats } = useGetAdminStats();
+  const { data: stats } = useGetPublicStats();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
 
@@ -53,6 +54,7 @@ export default function Home() {
 
   const accent = settings?.accentColor || "#ffffff";
   const bg = settings?.bgColor || "#000000";
+  const { formatPrice } = useCurrency();
 
   return (
     <div
@@ -234,7 +236,7 @@ export default function Home() {
                         <div className="font-bold text-white text-sm mb-2 truncate">{product.name}</div>
                         <div className="text-[10px] text-white/35 uppercase tracking-widest mb-1">Starting from</div>
                         <div className="flex items-baseline gap-2">
-                          <span className="text-xl font-black text-white">${product.priceUsd.toFixed(2)}</span>
+                          <span className="text-xl font-black text-white">{formatPrice(product.priceUsd)}</span>
                           {rates && (
                             <span className="text-[10px] text-white/30 font-mono">
                               ≈ {(product.priceUsd / rates.btcUsd).toFixed(5)} BTC
