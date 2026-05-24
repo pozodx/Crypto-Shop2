@@ -483,6 +483,12 @@ components:
           type: string
         logoUrl:
           type: ["string", "null"]
+        statFeedback:
+          type: ["string", "null"]
+        statSold:
+          type: ["string", "null"]
+        statCustomers:
+          type: ["string", "null"]
 
     ShopSettingsInput:
       type: object
@@ -507,15 +513,27 @@ components:
           type: string
         logoUrl:
           type: ["string", "null"]
+        statFeedback:
+          type: ["string", "null"]
+        statSold:
+          type: ["string", "null"]
+        statCustomers:
+          type: ["string", "null"]
 
     PublicStats:
       type: object
-      required: [totalOrders, completedOrders]
+      required: [totalOrders, completedOrders, statFeedback, statSold, statCustomers]
       properties:
         totalOrders:
           type: integer
         completedOrders:
           type: integer
+        statFeedback:
+          type: ["string", "null"]
+        statSold:
+          type: ["string", "null"]
+        statCustomers:
+          type: ["string", "null"]
 
     DeleteResult:
       type: object

@@ -9,4 +9,10 @@
 export interface PublicStats {
   totalOrders: number;
   completedOrders: number;
+  /** @nullable */
+  statFeedback: string | null;
+  /** @nullable */
+  statSold: string | null;
+  /** @nullable */
+  statCustomers: string | null;
 }

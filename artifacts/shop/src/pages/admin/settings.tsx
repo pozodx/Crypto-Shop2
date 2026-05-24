@@ -22,6 +22,9 @@ const settingsSchema = z.object({
   bgColor: z.string().min(1, "Background color is required"),
   accentColor: z.string().min(1, "Accent color is required"),
   logoUrl: z.string().nullable().optional(),
+  statFeedback: z.string().nullable().optional(),
+  statSold: z.string().nullable().optional(),
+  statCustomers: z.string().nullable().optional(),
   btcAddress: z.string(),
   ethAddress: z.string(),
 });
@@ -45,6 +48,9 @@ export default function SettingsAdmin() {
       bgColor: "#0a0a0a",
       accentColor: "#ffffff",
       logoUrl: "",
+      statFeedback: "",
+      statSold: "",
+      statCustomers: "",
       btcAddress: "",
       ethAddress: "",
     },
@@ -61,6 +67,9 @@ export default function SettingsAdmin() {
         bgColor: settings.bgColor || "#0a0a0a",
         accentColor: settings.accentColor || "#ffffff",
         logoUrl: settings.logoUrl || "",
+        statFeedback: settings.statFeedback || "",
+        statSold: settings.statSold || "",
+        statCustomers: settings.statCustomers || "",
         btcAddress: settings.btcAddress || "",
         ethAddress: settings.ethAddress || "",
       });
@@ -69,7 +78,14 @@ export default function SettingsAdmin() {
 
   const onSubmit = (values: SettingsForm) => {
     updateSettings.mutate(
-      { data: { ...values, logoUrl: values.logoUrl || null } },
+      { data: {
+          ...values,
+          logoUrl: values.logoUrl || null,
+          statFeedback: values.statFeedback || null,
+          statSold: values.statSold || null,
+          statCustomers: values.statCustomers || null,
+        }
+      },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getGetSettingsQueryKey() });
@@ -164,6 +180,40 @@ export default function SettingsAdmin() {
                   <FormItem>
                     <FormLabel>Subtitle</FormLabel>
                     <FormControl><Textarea placeholder="Great products don't have to be expensive..." {...field} rows={2} data-testid="input-hero-subtitle" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              </CardContent>
+            </Card>
+
+            {/* Hero Stats */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm">Hero Stats</CardTitle>
+                <CardDescription>The three counters shown below your hero buttons. Leave blank to use real order data.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <FormField control={form.control} name="statFeedback" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Feedback Rating</FormLabel>
+                    <FormControl><Input placeholder="e.g. 4.9 ★  (leave blank for default)" {...field} value={field.value ?? ""} data-testid="input-stat-feedback" /></FormControl>
+                    <FormDescription>Shown as the first stat. Default: "5 ★"</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="statSold" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Products Sold</FormLabel>
+                    <FormControl><Input placeholder="e.g. 1,240  (leave blank to use real count)" {...field} value={field.value ?? ""} data-testid="input-stat-sold" /></FormControl>
+                    <FormDescription>Shown as the second stat. Default: actual completed orders.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="statCustomers" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Total Customers</FormLabel>
+                    <FormControl><Input placeholder="e.g. 980  (leave blank to use real count)" {...field} value={field.value ?? ""} data-testid="input-stat-customers" /></FormControl>
+                    <FormDescription>Shown as the third stat. Default: actual total orders.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )} />

@@ -14,6 +14,10 @@ export const settingsTable = pgTable("settings", {
   btcAddress: text("btc_address").notNull().default(""),
   ethAddress: text("eth_address").notNull().default(""),
   logoUrl: text("logo_url"),
+  // Hero stat overrides — null means "use real data"
+  statFeedback: text("stat_feedback"),
+  statSold: text("stat_sold"),
+  statCustomers: text("stat_customers"),
 });
 
 export const insertSettingsSchema = createInsertSchema(settingsTable).omit({ id: true });

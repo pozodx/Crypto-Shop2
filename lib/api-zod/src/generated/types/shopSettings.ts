@@ -18,4 +18,10 @@ export interface ShopSettings {
   ethAddress: string;
   /** @nullable */
   logoUrl?: string | null;
+  /** @nullable */
+  statFeedback?: string | null;
+  /** @nullable */
+  statSold?: string | null;
+  /** @nullable */
+  statCustomers?: string | null;
 }

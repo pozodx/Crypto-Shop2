@@ -129,6 +129,12 @@ export interface ShopSettings {
   ethAddress: string;
   /** @nullable */
   logoUrl?: string | null;
+  /** @nullable */
+  statFeedback?: string | null;
+  /** @nullable */
+  statSold?: string | null;
+  /** @nullable */
+  statCustomers?: string | null;
 }
 
 export interface ShopSettingsInput {
@@ -143,11 +149,23 @@ export interface ShopSettingsInput {
   ethAddress?: string;
   /** @nullable */
   logoUrl?: string | null;
+  /** @nullable */
+  statFeedback?: string | null;
+  /** @nullable */
+  statSold?: string | null;
+  /** @nullable */
+  statCustomers?: string | null;
 }
 
 export interface PublicStats {
   totalOrders: number;
   completedOrders: number;
+  /** @nullable */
+  statFeedback: string | null;
+  /** @nullable */
+  statSold: string | null;
+  /** @nullable */
+  statCustomers: string | null;
 }
 
 export interface DeleteResult {

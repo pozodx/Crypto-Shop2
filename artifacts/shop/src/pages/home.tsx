@@ -125,9 +125,9 @@ export default function Home() {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-3 max-w-lg mx-auto">
             {[
-              { icon: Star,        value: "5 ★",                             label: "Feedback Rating" },
-              { icon: ShoppingBag, value: String(stats?.completedOrders ?? 0), label: "Products Sold" },
-              { icon: Users,       value: String(stats?.totalOrders ?? 0),     label: "Total Customers" },
+              { icon: Star,        value: stats?.statFeedback ?? "5 ★",                                     label: "Feedback Rating" },
+              { icon: ShoppingBag, value: stats?.statSold ?? String(stats?.completedOrders ?? 0),           label: "Products Sold" },
+              { icon: Users,       value: stats?.statCustomers ?? String(stats?.totalOrders ?? 0),          label: "Total Customers" },
             ].map(({ icon: Icon, value, label }) => (
               <div key={label} className="flex items-center gap-2.5 bg-black/40 border border-white/10 rounded-xl px-3 py-3 backdrop-blur-sm">
                 <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center shrink-0">

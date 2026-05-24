@@ -92,9 +92,13 @@ router.get("/settings", async (_req, res) => {
 router.get("/stats", async (_req, res) => {
   const [total] = await db.select({ value: count() }).from(ordersTable);
   const [completed] = await db.select({ value: count() }).from(ordersTable).where(eq(ordersTable.status, "completed"));
+  const [settings] = await db.select().from(settingsTable).limit(1);
   res.json({
     totalOrders: total?.value ?? 0,
     completedOrders: completed?.value ?? 0,
+    statFeedback: settings?.statFeedback ?? null,
+    statSold: settings?.statSold ?? null,
+    statCustomers: settings?.statCustomers ?? null,
   });
 });
 

@@ -261,6 +261,9 @@ router.get("/admin/settings", async (req, res) => {
     btcAddress: settings.btcAddress,
     ethAddress: settings.ethAddress,
     logoUrl: settings.logoUrl,
+    statFeedback: settings.statFeedback,
+    statSold: settings.statSold,
+    statCustomers: settings.statCustomers,
   });
 });
 
@@ -268,6 +271,7 @@ router.put("/admin/settings", async (req, res) => {
   const {
     shopName, shopDescription, heroTitle, heroSubtitle, heroBadge,
     bgColor, accentColor, btcAddress, ethAddress, logoUrl,
+    statFeedback, statSold, statCustomers,
   } = req.body as {
     shopName?: string;
     shopDescription?: string;
@@ -279,6 +283,9 @@ router.put("/admin/settings", async (req, res) => {
     btcAddress?: string;
     ethAddress?: string;
     logoUrl?: string | null;
+    statFeedback?: string | null;
+    statSold?: string | null;
+    statCustomers?: string | null;
   };
 
   let [settings] = await db.select().from(settingsTable).limit(1);
@@ -311,6 +318,9 @@ router.put("/admin/settings", async (req, res) => {
     if (btcAddress !== undefined) updateData.btcAddress = btcAddress;
     if (ethAddress !== undefined) updateData.ethAddress = ethAddress;
     if (logoUrl !== undefined) updateData.logoUrl = logoUrl;
+    if (statFeedback !== undefined) updateData.statFeedback = statFeedback;
+    if (statSold !== undefined) updateData.statSold = statSold;
+    if (statCustomers !== undefined) updateData.statCustomers = statCustomers;
 
     [settings] = await db
       .update(settingsTable)
@@ -330,6 +340,9 @@ router.put("/admin/settings", async (req, res) => {
     btcAddress: settings.btcAddress,
     ethAddress: settings.ethAddress,
     logoUrl: settings.logoUrl,
+    statFeedback: settings.statFeedback,
+    statSold: settings.statSold,
+    statCustomers: settings.statCustomers,
   });
 });
 

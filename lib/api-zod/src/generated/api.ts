@@ -21,7 +21,10 @@ export const GetPublicSettingsResponse = zod.object({
   "accentColor": zod.string(),
   "btcAddress": zod.string(),
   "ethAddress": zod.string(),
-  "logoUrl": zod.string().nullish()
+  "logoUrl": zod.string().nullish(),
+  "statFeedback": zod.string().nullish(),
+  "statSold": zod.string().nullish(),
+  "statCustomers": zod.string().nullish()
 })
 
 
@@ -30,7 +33,10 @@ export const GetPublicSettingsResponse = zod.object({
  */
 export const GetPublicStatsResponse = zod.object({
   "totalOrders": zod.number(),
-  "completedOrders": zod.number()
+  "completedOrders": zod.number(),
+  "statFeedback": zod.string().nullable(),
+  "statSold": zod.string().nullable(),
+  "statCustomers": zod.string().nullable()
 })
 
 
@@ -292,7 +298,10 @@ export const GetSettingsResponse = zod.object({
   "accentColor": zod.string(),
   "btcAddress": zod.string(),
   "ethAddress": zod.string(),
-  "logoUrl": zod.string().nullish()
+  "logoUrl": zod.string().nullish(),
+  "statFeedback": zod.string().nullish(),
+  "statSold": zod.string().nullish(),
+  "statCustomers": zod.string().nullish()
 })
 
 
@@ -309,7 +318,10 @@ export const UpdateSettingsBody = zod.object({
   "accentColor": zod.string().optional(),
   "btcAddress": zod.string().optional(),
   "ethAddress": zod.string().optional(),
-  "logoUrl": zod.string().nullish()
+  "logoUrl": zod.string().nullish(),
+  "statFeedback": zod.string().nullish(),
+  "statSold": zod.string().nullish(),
+  "statCustomers": zod.string().nullish()
 })
 
 export const UpdateSettingsResponse = zod.object({
@@ -322,7 +334,10 @@ export const UpdateSettingsResponse = zod.object({
   "accentColor": zod.string(),
   "btcAddress": zod.string(),
   "ethAddress": zod.string(),
-  "logoUrl": zod.string().nullish()
+  "logoUrl": zod.string().nullish(),
+  "statFeedback": zod.string().nullish(),
+  "statSold": zod.string().nullish(),
+  "statCustomers": zod.string().nullish()
 })
 
 
