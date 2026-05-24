@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
 import NotFound from "@/pages/not-found";
+import { setBaseUrl } from "@workspace/api-client-react";
 
 import Home from "@/pages/home";
 import ProductDetail from "@/pages/product-detail";
@@ -13,6 +14,10 @@ import Dashboard from "@/pages/admin/dashboard";
 import ProductsAdmin from "@/pages/admin/products";
 import OrdersAdmin from "@/pages/admin/orders";
 import SettingsAdmin from "@/pages/admin/settings";
+
+if (import.meta.env.VITE_API_URL) {
+  setBaseUrl(import.meta.env.VITE_API_URL);
+}
 
 const queryClient = new QueryClient();
 

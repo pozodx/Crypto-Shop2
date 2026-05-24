@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit2, Trash2, Tag, CheckCircle2, XCircle } from "lucide-react";
-import { Product, ProductInput } from "@workspace/api-client-react/src/generated/api.schemas";
+import { Product, ProductInput } from "@workspace/api-client-react";
 
 export default function ProductsAdmin() {
   const { data: products, isLoading } = useListAdminProducts();
